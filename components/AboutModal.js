@@ -2,7 +2,7 @@ import { Linking, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import { t } from '../i18n';
 
 // プライバシーポリシーの公開URL(GitHub Pages等に置いたら差し替える)
-const PRIVACY_URL = 'https://hanabi822.github.io/puchipuchi/privacy.html';
+const PRIVACY_URL = 'https://w6d8pzqwyv-ux.github.io/puchipuchi/privacy.html';
 
 // 「このアプリについて」モーダル。クレジット表記とプライバシーポリシーへの入口
 export default function AboutModal({ visible, onClose }) {
