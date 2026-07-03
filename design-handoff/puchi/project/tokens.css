@@ -1,0 +1,52 @@
+/* ===== Puchi! — 昭和レトロ × 生成り/アースカラー デザイントークン =====
+   アンカーは「たたみ」画面。生成り(kinari) × 若草(matcha) × 藍(ai) を全体へ。 */
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Yuji+Syuku&display=swap');
+
+:root {
+  /* 生成り / 木 / 墨 ── 共通クローム(タブバー・縁取り) */
+  --paper:      #efe6d2;   /* kinari : 暖かい生成り。タブバー・帯の地 */
+  --paper-2:    #e6d9bd;   /* 深い生成り */
+  --paper-3:    #f6efde;   /* 明るい生成り(ハイライト) */
+  --wood:       #9a7650;   /* 木の縁(敷居) */
+  --wood-dark:  #6e523a;   /* 濃い木 */
+  --sumi:       #3d382e;   /* 墨色テキスト(暖かい黒) */
+  --sumi-soft:  #837754;   /* 退色した墨(非選択ラベル) */
+
+  /* アクセント ── 藍(ブランド紺と昭和藍の橋渡し) と 朱・若草 */
+  --ai:         #355c7d;   /* 藍色 : 選択中アクセント */
+  --ai-deep:    #243f54;
+  --ai-soft:    #8aa6bb;
+  --shu:        #c75d43;   /* 朱色 : みかん/こたつ系の暖アクセント(控えめ) */
+  --matcha:     #93a86a;   /* 若草 : 畳 */
+  --matcha-deep:#23281f;   /* 畳のへり(黒紺) */
+
+  /* 各触感の地色(生成り基調へ寄せた退色トーン) */
+  --puchi-bg:   #d3ddd9;   /* 古陶器のブルーグレー(暖かい水色) */
+  --puchi-cell: #eef4ef;
+  --puchi-rim:  #b6c5bb;
+  --puni-bg:    #f1e2db;   /* 餅/桜のくすみピンク(暖) */
+  --puni-blob:  #e6b3bd;
+  --puni-rim:   #d295a0;
+  --tatami-bg:  #e3dac4;   /* 板の間(=生成りそのもの) */
+  --mizu-bg:    #2a4a5f;   /* 藍染めの深水 */
+  --mizu-ripple:#cfe0dd;
+
+  --radius:     18px;
+  --shadow-soft: 0 2px 6px rgba(61,56,46,.10), 0 8px 24px rgba(61,56,46,.08);
+}
+
+* { box-sizing: border-box; }
+
+/* 和紙のかすかな粒状感(各地色に重ねる) */
+.paper-grain::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(120,100,70,.05) 1px, transparent 1.2px),
+    radial-gradient(rgba(120,100,70,.04) 1px, transparent 1.2px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 4px;
+  mix-blend-mode: multiply;
+  opacity: .8;
+}

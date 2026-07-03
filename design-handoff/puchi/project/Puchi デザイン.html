@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Puchi! — UIデザイン提案</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="puchi-icons.jsx"></script>
+<script type="text/babel" src="puchi-phone.jsx"></script>
+<script type="text/babel" src="puchi-tabbars.jsx"></script>
+<script type="text/babel" src="puchi-screens.jsx"></script>
+<script type="text/babel" src="puchi-splash.jsx"></script>
+
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard, DCPostIt } = window;
+const { PhoneShell, TabBarA, TabBarB, TabBarC, AdTray } = window;
+const { PuchiBg, PuniBg, TatamiBg, MizuBg } = window;
+const { SplashScreen, AppIconBoard, PaletteBoard } = window;
+
+// フォンに「画面＋広告＋タブバー」を合成（案Aを標準適用）
+function FullScreen({ ScreenComp, active, dark = false, bg = '#000', time = '16:36' }) {
+  return (
+    <PhoneShell dark={dark} bg={bg} time={time}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+          <div style={{ position: 'absolute', inset: 0 }}><ScreenComp /></div>
+        </div>
+        <AdTray />
+        <TabBarA active={active} />
+      </div>
+    </PhoneShell>
+  );
+}
+
+// タブバー比較用の下部クロップ（泡の地→広告→タブ）
+function CropBoard({ Bar }) {
+  return (
+    <div style={{
+      width: 320, borderRadius: 30, overflow: 'hidden',
+      boxShadow: '0 18px 40px rgba(61,56,46,.18), 0 0 0 1px rgba(61,56,46,.08), inset 0 0 0 4px #1c1a16',
+      background: '#1c1a16',
+    }}>
+      <div style={{ borderRadius: 26, overflow: 'hidden', margin: 4 }}>
+        <div style={{ position: 'relative', height: 86, background: 'var(--puchi-bg)' }} className="paper-grain">
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexWrap: 'wrap', gap: 6, padding: '14px 18px 0', opacity: .9 }}>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} style={{ width: 50, height: 50, borderRadius: '50%',
+                background: 'radial-gradient(circle at 38% 32%, #fbfdfb, var(--puchi-cell))',
+                border: '1px solid var(--puchi-rim)', boxShadow: '0 3px 5px rgba(70,90,80,.18)' }} />
+            ))}
+          </div>
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 30%, var(--puchi-bg) 92%)' }} />
+        </div>
+        <AdTray />
+        <Bar active="puchi" />
+      </div>
+    </div>
+  );
+}
+
+// 余白を持たせてシャドウを見せる枠
+const pad = (w, h, node) => (
+  <div style={{ width: w, height: h, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{node}</div>
+);
+const clear = { background: 'transparent', boxShadow: 'none', overflow: 'visible' };
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="system" title="世界観 & パレット" subtitle="アンカーは「たたみ」── 生成り・若草・藍を家じゅうへ">
+        <DCArtboard id="palette" label="デザインシステム" width={788} height={648} style={clear}>
+          {pad(788, 648, <PaletteBoard />)}
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="tabbar" title="タブバー案（最優先）" subtitle="各触感のシンボル＋藍の選択状態。白い広告枠は生成りの“盆”に置いて馴染ませる">
+        <DCArtboard id="a" label="案A · 縁側バー（推奨／全画面に適用）" width={356} height={292} style={clear}>
+          {pad(356, 292, <CropBoard Bar={TabBarA} />)}
+        </DCArtboard>
+        <DCArtboard id="b" label="案B · 畳タイル" width={356} height={292} style={clear}>
+          {pad(356, 292, <CropBoard Bar={TabBarB} />)}
+        </DCArtboard>
+        <DCArtboard id="c" label="案C · 浮遊カプセル（ミニマル）" width={356} height={292} style={clear}>
+          {pad(356, 292, <CropBoard Bar={TabBarC} />)}
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="screens" title="4画面のトーン統一" subtitle="退色トーンへ寄せ、共通の生成りクローム（案A）を適用">
+        <DCArtboard id="puchi" label="ぷち" width={356} height={732} style={clear}>
+          {pad(356, 732, <FullScreen ScreenComp={PuchiBg} active="puchi" bg="#d3ddd9" />)}
+        </DCArtboard>
+        <DCArtboard id="puni" label="ぷに" width={356} height={732} style={clear}>
+          {pad(356, 732, <FullScreen ScreenComp={PuniBg} active="puni" bg="#f1e2db" />)}
+        </DCArtboard>
+        <DCArtboard id="tatami" label="たたみ" width={356} height={732} style={clear}>
+          {pad(356, 732, <FullScreen ScreenComp={TatamiBg} active="tatami" bg="#e3dac4" />)}
+        </DCArtboard>
+        <DCArtboard id="mizu" label="みず" width={356} height={732} style={clear}>
+          {pad(356, 732, <FullScreen ScreenComp={MizuBg} active="mizu" dark bg="#2a4a5f" />)}
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="brand" title="起動画面 / アイコン" subtitle="マスコットは起動画面に限定登場。ロゴの「!」はアプリアイコンの泡と連動">
+        <DCArtboard id="splash" label="起動画面（スプラッシュ）" width={356} height={732} style={clear}>
+          {pad(356, 732, <PhoneShell bg="#efe6d2"><SplashScreen /></PhoneShell>)}
+        </DCArtboard>
+        <DCArtboard id="icon" label="アプリアイコン（変更なし）" width={220} height={220} style={clear}>
+          {pad(220, 220, <AppIconBoard />)}
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

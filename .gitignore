@@ -39,3 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Firebase設定(機密・公開リポジトリに上げない)
+GoogleService-Info.plist
