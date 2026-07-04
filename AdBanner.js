@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // 広告SDK。Expo Goには入っていないので、無い環境では広告なしで動く
 let ads = null;
@@ -12,8 +13,10 @@ try {
 // 本番の広告ユニットID(バナー)。開発中はテスト広告を表示する
 const BANNER_ID = __DEV__ ? ads?.TestIds?.BANNER : 'ca-app-pub-8238604859036288/9393690157';
 
-export default function AdBanner() {
+// onInfo: ⓘ(このアプリについて)を押したときに呼ばれる
+export default function AdBanner({ onInfo }) {
   const [ready, setReady] = useState(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!ads) return;
@@ -30,30 +33,52 @@ export default function AdBanner() {
     })();
   }, []);
 
-  if (!ads || !ready) return null;
+  const showAd = ads && ready;
+  const { BannerAd, BannerAdSize } = ads || {};
 
-  const { BannerAd, BannerAdSize } = ads;
-  // 白いバナーをそのまま出さず、生成りの“盆”トレイで囲んで馴染ませる
+  // 帯(ⓘ入り)は常に表示。広告はSDK準備ができたときだけ。
+  // home indicatorぶんの余白は最下部のこのビューで確保する
   return (
-    <View style={s.outer}>
-      <View style={s.tray}>
-        <View style={s.dashed} />
-        <Text style={s.tag}>広告</Text>
-        <View style={s.slot}>
-          <BannerAd
-            unitId={BANNER_ID}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{ requestNonPersonalizedAdsOnly: true }}
-          />
-        </View>
+    <View style={[s.outer, { paddingBottom: insets.bottom + 6 }]}>
+      {/* 右端にⓘ。広告に重ねない(AdMob規約)ため広告の上の帯に置く */}
+      <View style={s.header}>
+        <Pressable onPress={onInfo} hitSlop={12} style={s.infoBtn}>
+          <Text style={s.infoText}>i</Text>
+        </Pressable>
       </View>
+      {showAd && (
+        // 白いバナーをそのまま出さず、生成りの“盆”トレイで囲んで馴染ませる
+        <View style={s.tray}>
+          <View style={s.dashed} />
+          <Text style={s.tag}>広告</Text>
+          <View style={s.slot}>
+            <BannerAd
+              unitId={BANNER_ID}
+              size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+              requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 }
 
 const s = StyleSheet.create({
-  outer: { paddingTop: 8, paddingHorizontal: 14, paddingBottom: 6, backgroundColor: '#EFE6D2' },
+  outer: { paddingTop: 4, paddingHorizontal: 6, backgroundColor: '#EFE6D2' },
+  header: { flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 4, paddingBottom: 2 },
+  infoBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(154,118,80,0.22)', // 帯に馴染む茶の半透明
+  },
+  infoText: { fontSize: 14, fontFamily: 'ZenMaruGothic_700Bold', color: '#6b5836' },
   tray: {
+    marginTop: 4,
+    marginHorizontal: 8,
     borderRadius: 14,
     padding: 6,
     backgroundColor: '#F1E6CC',

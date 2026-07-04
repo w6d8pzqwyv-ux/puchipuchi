@@ -1,5 +1,4 @@
 import { Pressable, Text, View, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FeelIcon from './FeelIcon';
 import { t } from '../i18n';
 
@@ -11,9 +10,9 @@ const FEELS = [
 ];
 
 export default function TabBar({ active, onSelect }) {
-  const insets = useSafeAreaInsets();
+  // 広告がこの下に来るので、ここでは home indicator ぶんの余白は取らない
   return (
-    <View style={[s.bar, { paddingBottom: insets.bottom + 12 }]}>
+    <View style={s.bar}>
       {FEELS.map((f) => {
         const on = f.key === active;
         const color = on ? '#355C7D' : '#837754';
@@ -39,6 +38,7 @@ const s = StyleSheet.create({
     borderTopWidth: 2.5,
     borderTopColor: '#9A7650',
     paddingTop: 9,
+    paddingBottom: 10,
   },
   tab: { flex: 1, alignItems: 'center' },
   inner: {

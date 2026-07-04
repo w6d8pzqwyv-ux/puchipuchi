@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 import AboutModal from './components/AboutModal';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts, ZenMaruGothic_500Medium, ZenMaruGothic_700Bold, ZenMaruGothic_900Black } from '@expo-google-fonts/zen-maru-gothic';
@@ -32,12 +31,11 @@ function ComingSoon() {
   );
 }
 
-// 中身をSafeAreaProviderの内側に分離(useSafeAreaInsetsを使うため)
+// 中身をSafeAreaProviderの内側に分離(子でuseSafeAreaInsetsを使うため)
 function Main() {
   const [feelKey, setFeelKey] = useState('puchi');
   const [showSplash, setShowSplash] = useState(true);
   const [showAbout, setShowAbout] = useState(false);
-  const insets = useSafeAreaInsets();
   const feel = FEELS.find((f) => f.key === feelKey);
   const Screen = feel.screen ?? ComingSoon;
 
@@ -60,17 +58,10 @@ function Main() {
       <View style={styles.screenArea}>
         <Screen />
       </View>
-      {/* 右上のⓘ: クレジット表記とプライバシーポリシーの入口 */}
-      <Pressable
-        style={[styles.infoBtn, { top: insets.top + 8 }]}
-        hitSlop={10}
-        onPress={() => setShowAbout(true)}
-      >
-        <Text style={styles.infoText}>i</Text>
-      </Pressable>
       <AboutModal visible={showAbout} onClose={() => setShowAbout(false)} />
-      <AdBanner />
+      {/* 下側のクローム: タブ → その下に広告(ⓘは広告帯の右端) */}
       <TabBar active={feelKey} onSelect={select} />
+      <AdBanner onInfo={() => setShowAbout(true)} />
       {showSplash && <Splash onDone={() => setShowSplash(false)} />}
       <StatusBar style="dark" />
     </View>
@@ -92,21 +83,6 @@ const styles = StyleSheet.create({
   },
   screenArea: {
     flex: 1,
-  },
-  infoBtn: {
-    position: 'absolute',
-    right: 14,
-    width: 30,
-    height: 30,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(53,92,125,0.55)', // 藍の半透明。触感の邪魔をしない
-  },
-  infoText: {
-    fontSize: 15,
-    fontFamily: 'ZenMaruGothic_700Bold',
-    color: '#f6f1e3',
   },
   comingSoon: {
     flex: 1,
